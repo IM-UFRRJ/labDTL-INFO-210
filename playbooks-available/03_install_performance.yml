@@ -1,0 +1,17 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install performance tools
+     command: apt install -y cpufrequtils psensor
+   - name: setting CPU with performance
+     lineinfile:
+       path: /etc/default/cpufrequtils
+       line: 'GOVERNOR="performance"'
+       create: yes
+   - name: restart cpufrequtils
+     service: name=cpufrequtils state=restarted enabled=yes
+

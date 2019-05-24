@@ -1,0 +1,17 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: update APT
+     command: apt update
+   - name: upgrade APT
+     command: apt upgrade -y
+   - name: autoremove APT
+     command: apt autoremove --purge -y
+   - name: autoclean APT
+     command: apt autoclean -y
+   - name: clean APT
+     command: apt clean -y

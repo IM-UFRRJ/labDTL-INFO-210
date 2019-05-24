@@ -1,0 +1,8 @@
+---
+- hosts: labDTL
+  tasks:
+   - name: list locales
+     shell: "locale && locale -a"
+     register: shell_result
+   - debug:
+       var: shell_result.stdout_lines

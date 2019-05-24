@@ -1,0 +1,20 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: set timezone to America/Sao_Paulo
+     timezone:
+       name: America/Sao_Paulo
+   - name: remove NTP
+     command: apt purge -y ntp
+   - name: install OpenNTPD
+     command: apt install -y openntpd
+   - name: stop OpenNTPD
+     service: name=openntpd state=stopped enabled=yes
+   - name: replace conf OpenNTPD
+     command: echo 'servers pool.ntp.br' > /etc/openntpd/ntpd.conf
+   - name: start OpenNTPD
+     service: name=openntpd state=restarted enabled=yes

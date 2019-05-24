@@ -1,0 +1,13 @@
+---
+- hosts: labDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: reboot
+      shell: "sleep 5 && shutdown -r now"
+      become: yes
+      async: 10
+      poll: 0
+    - name: wait come up
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 delay=80 state=started
+

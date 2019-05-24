@@ -1,0 +1,71 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: add a signing key for Google repository
+     apt_key:
+       url: https://dl.google.com/linux/linux_signing_key.pub
+       state: present
+   - name: add repository Google-Chrome
+     apt_repository:
+       repo: deb [arch={{ arch_deb }}] http://dl.google.com/linux/chrome/deb/ stable main
+       state: present
+       filename: google-chrome
+   - name: add the Oracle signing key for VirtualBox repository
+     apt_key:
+       url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+       state: present
+   - name: add repository VirtualBox
+     apt_repository:
+       repo: deb [arch={{ arch_deb }}] https://download.virtualbox.org/virtualbox/debian {{ dist_deb }} contrib
+       state: present
+       filename: virtualbox
+   - name: add a signing key for Atom repository
+     apt_key:
+       url: https://packagecloud.io/AtomEditor/atom/gpgkey
+       state: present
+   - name: add repository Atom
+     apt_repository:
+       repo: deb [arch={{ arch_deb }}] https://packagecloud.io/AtomEditor/atom/any/ any main
+       state: present
+       filename: atom
+   - name: add a signing key for Docker repository
+     apt_key:
+       url: https://download.docker.com/linux/ubuntu/gpg
+       state: present
+   - name: add repository Docker
+     apt_repository:
+       repo: deb [arch={{ arch_deb }}] https://download.docker.com/linux/ubuntu {{ dist_deb }} stable
+       state: present
+       filename: docker
+   - name: add a signing key for R-Project repository
+     apt_key:
+       keyserver: keyserver.ubuntu.com
+       id: E298A3A825C0D65DFD57CBB651716619E084DAB9
+   - name: add repository R-Project
+     apt_repository:
+       repo: deb https://cloud.r-project.org/bin/linux/ubuntu {{ dist_deb }}-cran35/
+       state: present
+       filename: r-project
+   - name: add a signing key for Sublime Text repository
+     apt_key:
+       url: https://download.sublimetext.com/sublimehq-pub.gpg
+       state: present
+   - name: add repository R-Project
+     apt_repository:
+       repo: deb https://download.sublimetext.com/ apt/dev/
+       state: present
+       filename: sublime-text
+   - name: add a signing key for Geogebra repository
+     apt_key:
+       url: https://static.geogebra.org/linux/office@geogebra.org.gpg.key
+       state: present
+   - name: add repository Geogebra
+     apt_repository:
+       repo: deb [arch={{ arch_deb }}] http://www.geogebra.net/linux/ stable main
+       state: present
+       filename: sublime-text
+

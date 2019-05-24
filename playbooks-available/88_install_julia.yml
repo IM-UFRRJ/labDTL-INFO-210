@@ -1,0 +1,25 @@
+---
+- hosts: labDTL  
+  vars_files:
+    - vars.yml
+  vars:
+    path_julia: /opt/programs/julia
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install deps for julia
+     command: apt install -y m4
+     become: yes
+   - name: clone Julia git repo
+     git:
+       repo: 'https://github.com/JuliaLang/julia.git'
+       dest: "{{ path_julia }}"
+       version: v1.1.1
+   - name: compile Julia
+     shell: "cd {{ path_julia }} && make"
+   - name: install link to Julia
+     file:
+       src: "{{ path_julia }}/julia"
+       dest: "/usr/local/bin/julia"
+       state: link
+     become: yes
+

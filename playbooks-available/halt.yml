@@ -1,0 +1,13 @@
+---
+- hosts: labDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: halt
+      shell: "sleep 5 && shutdown -h now"
+      become: yes
+      async: 10
+      poll: 0
+    - name: wait go down
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 delay=5 state=drained
+

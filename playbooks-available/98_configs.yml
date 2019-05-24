@@ -1,0 +1,48 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install utilities to config
+     command: apt install -y python-psutil python3-psutil python-dbus python3-dbus
+   - name: setting keyboard
+     replace:
+       path: /etc/default/keyboard
+       regexp: '(XKBLAYOUT=")us(")?$'
+       replace: '\1br\2'
+   - name: setting Apache2-httpd
+     command: a2enmod userdir
+   - name: restart Apache2-httpd
+     service: name=apache2 state=restarted enabled=yes
+   - name: create public_html at skeleton to new users
+     file:
+       path: /etc/skel/public_html
+       state: directory
+   - name: create public_html/index.html at skeleton to new users
+     lineinfile:
+       path: /etc/skel/public_html/index.html
+       line: '<html><body><h1>Welcome to local user site</h1>This is a sample page, create yours at ~/public_html/</body></html>'
+       create: yes
+   - name: get files in /home/
+     shell: ls /home/
+     register: homeusers
+   - name: create ~/public_html to existing users
+     file:
+       path: "/home/{{ item }}/public_html/"
+       mode: 0755
+       owner: "{{ item }}"
+       group: "{{ item }}"
+       state: directory
+     with_items: "{{ homeusers.stdout_lines }}"
+   - name: create ~/public_html/index.html to existing users
+     copy:
+       src: "/etc/skel/public_html/index.html"
+       dest: "/home/{{ item }}/public_html/index.html"
+       remote_src: yes
+       mode: 0755
+       owner: "{{ item }}"
+       group: "{{ item }}"
+     with_items: "{{ homeusers.stdout_lines }}"
+

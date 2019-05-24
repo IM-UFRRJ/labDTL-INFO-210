@@ -1,0 +1,20 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install essentials
+     command: apt install -y samba htop curl hardinfo gdebi synaptic cmake traceroute gparted openssh-server tree screen build-essential
+   - name: install gnome utilities
+     command: apt install -y gnome-calculator gnome-system-monitor
+   - name: install other utilities
+     command: apt install -y wamerican aspell-pt-br
+   - name: create /opt/programs/
+     file:
+       path: "/opt/programs"
+       mode: a+rwx
+       recurse: yes
+       state: directory
+

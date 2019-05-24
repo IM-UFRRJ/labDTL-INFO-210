@@ -1,0 +1,69 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  vars:
+    mysql_cnf: "{{ ansible_env.HOME }}/.my.cnf"
+    regex_pwd: 'password=(.*)'
+    mysql_list_host_all:
+      - 127.0.0.1
+      - ::1
+      - localhost
+      - "{{ ansible_hostname }}"
+      - "%"
+  environment: "{{proxy_env}}"
+  tasks:
+
+   - name: "copy {{ mysql_cnf }}"
+     copy:
+       src: "{{ path_mysql_cnf }}"
+       dest: "{{ mysql_cnf }}"
+
+   - name: read mysql root password from file
+     shell: "cat {{ mysql_cnf }}"
+     register: results
+
+   - name: debug show content
+     debug: msg="{{ results }}"
+
+   - name: parsing to capture mysql root password
+     set_fact:
+       mysql_root_pwd: "{{ results.stdout | regex_search(regex_pwd, '\\1') | first }}"
+
+   - name: debug pwd
+     debug: msg="{{ mysql_root_pwd }}"
+
+   - name: clear password from file
+     lineinfile:
+       path: "{{ mysql_cnf }}"
+       regexp: "^{{ regex_pwd }}"
+       line: 'password='
+
+   - name: set password at file
+     lineinfile:
+       path: "{{ mysql_cnf }}"
+       regexp: "^{{ regex_pwd }}"
+       line: "password={{ mysql_root_pwd }}"
+
+   - name: "delete {{ mysql_cnf }}"
+     file:
+       path: "{{ mysql_cnf }}"
+       state: absent
+
+#    - name: list
+#      debug: msg="{{ item }}"
+#      loop: "{{ mysql_list_host_all }}"
+#    - debug: var=ansible_all_ipv4_addresses
+#    - debug: var=ansible_default_ipv4.address
+#    - debug: var=ansible_host
+#    - debug: var=proxy_env
+#    - debug: var=ssh_client_ipv4
+#    - debug: var=proxy_env.http_proxy
+#    - debug: var=ansible_lsb.codename
+#    - debug: var=ansible_lsb.description
+#    - debug: var=ansible_lsb.id
+#    - debug: var=ansible_lsb.major_release
+#    - debug: var=ansible_lsb.release
+#    - debug: var=ansible_architecture
+

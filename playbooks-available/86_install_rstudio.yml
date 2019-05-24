@@ -1,0 +1,29 @@
+---
+- hosts: labDTL
+  vars_files:
+    - vars.yml
+  vars:
+    url_base_rstudio: https://download1.rstudio.org
+    file_rstudio: /tmp/rstudio.deb
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: download index to RStudio's URLs
+     get_url:
+       url: "{{ url_base_rstudio }}"
+       dest: /tmp/rstudio_index.xml
+   - name: reading index to RStudio
+     shell: cat /tmp/rstudio_index.xml
+     register: results
+   - name: parsing to capture version of RStudio
+     set_fact:
+       url_rstudio: "{{ results.stdout | regex_search(regex_rstudio, '\\1') | first }}"
+     vars:
+       regex_rstudio: "[\\s\\S]+>[\\s]*(desktop\\/{{ dist_deb }}\\/{{ arch_deb }}\\/rstudio-[0-9\\.]+-{{ arch_deb }}.deb)[\\s]*<[\\s\\S]+"
+   - name: download RStudio from {{ url_base_rstudio }}/{{ url_rstudio }}
+     get_url:
+       url: "{{ url_base_rstudio }}/{{ url_rstudio }}"
+       dest: "{{ file_rstudio }}"
+   - name: install RStudio
+     command: "apt install -y {{ file_rstudio }}"
+     become: true
+

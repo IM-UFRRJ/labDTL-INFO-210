@@ -1,0 +1,19 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install Snap
+     command: apt install -y snap
+   - name: install Snapcraft
+     command: snap install --classic snapcraft
+   - name: install NodeJS
+     command: snap install --classic --channel=10 node
+   - name: install Eclipse
+     command: snap install --classic eclipse
+   - name: install PyCharm-Community
+     command: snap install --classic pycharm-community
+
+

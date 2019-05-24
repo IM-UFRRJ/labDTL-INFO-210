@@ -1,0 +1,28 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: add full name of admin user
+     user:
+       name: "admindtl"
+       comment: "Administrador"
+   - name: add the users
+     user:
+       name: "{{ item.usr }}"
+       comment: "{{ item.fname }}"
+       password:  "{{ item.pwd | password_hash('sha512', item.phr) }}"
+       groups: "{{ item.groups }}"
+       append: yes
+       shell: /bin/bash       # Defaults to /bin/bash
+       system: no             # Defaults to no
+       create_home: yes       # Defaults to yes
+     loop:
+       - { usr: 'profdtl', fname: 'Prof. DTL', pwd: '{{ pwd_prof_dtl }}', phr: '{{ phr_prof_dtl }}', groups: 'adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare' }
+       - { usr: 'profdcc', fname: 'Prof. DCC', pwd: '{{ pwd_prof_dcc }}', phr: '{{ phr_prof_dcc }}', groups: 'adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare' }
+       - { usr: 'alunodtl', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dtl }}', phr: '{{ phr_aluno_dtl }}', groups: 'users' }
+       - { usr: 'alunodcc', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dcc }}', phr: '{{ phr_aluno_dcc }}', groups: 'users' }
+       - { usr: 'extensao', fname: 'Extensão', pwd: '{{ pwd_extensao }}', phr: '{{ phr_extensao }}', groups: 'users' }
+

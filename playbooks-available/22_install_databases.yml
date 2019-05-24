@@ -1,0 +1,151 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  vars:
+    mysql_cnf: "{{ ansible_env.HOME }}/.my.cnf"
+    regex_pwd: 'password=(.*)'
+    mysql_list_host_all:
+      - 127.0.0.1
+      - ::1
+      - localhost
+      - "{{ ansible_hostname }}"
+      - "%"
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install MySQL
+     command: apt install -y mysql-server mysql-client mysql-workbench libmysqlclient-dev python-mysqldb python3-mysqldb
+   - name: install PostgreSQL
+     command: apt install -y postgresql-all postgresql libpq-dev python-psycopg2 python3-psycopg2
+
+   - name: ensure database services are running and start on boot
+     service:
+       name: "{{ item }}"
+       state: started
+       enabled: yes
+     loop:
+       - mysql
+       - postgresql
+
+   - name: "copy {{ mysql_cnf }}"
+     copy:
+       src: "{{ path_mysql_cnf }}"
+       dest: "{{ mysql_cnf }}"
+
+   - name: read MySQL root password from file
+     shell: "cat {{ mysql_cnf }}"
+     register: cat_mysql_cnf
+
+   - name: parsing to capture MySQL root password
+     set_fact:
+       mysql_root_pwd: "{{ cat_mysql_cnf.stdout | regex_search(regex_pwd, '\\1') | first }}"
+
+   - name: update MySQL password for the localhost root account
+     block:
+       - mysql_user:
+           login_host: 'localhost'
+           login_user: 'root'
+           login_password: ''
+           name: 'root'
+           password: "{{ mysql_root_pwd }}"
+           host: localhost
+           state: present
+     rescue:
+       - debug:
+           msg: 'MySQL password for the localhost root account is already updated.'
+
+   - name: update MySQL password for all root accounts
+     mysql_user:
+       login_host: 'localhost'
+       name: 'root'
+       password: "{{ mysql_root_pwd }}"
+       host: "{{ item }}"
+       state: present
+     loop: "{{ mysql_list_host_all }}"
+
+   - name: remove the 'test' database from MySQL
+     mysql_db:
+       name: test
+       state: absent
+
+   - name: removes all anonymous user accounts from MySQL
+     mysql_user:
+       name: ''
+       host_all: yes
+       state: absent
+
+   - name: create MySQL database user 'aluno' with all database privileges
+     mysql_user:
+       name: 'aluno'
+       password: 'aluno123'
+       priv: '*.*:ALL'
+       host: "{{ item }}"
+       state: present
+     loop: "{{ mysql_list_host_all }}"
+
+   - name: "delete {{ mysql_cnf }}"
+     file:
+       path: "{{ mysql_cnf }}"
+       state: absent
+
+   - name: getting PostgreSQL server version
+     shell: "pg_config --version | grep -oP 'PostgreSQL \\K\\d+'"
+     register: postgresql_version
+
+   - name: setting PostgreSQL
+     become: true
+     become_user: postgres
+     lineinfile:
+       path: "/etc/postgresql/{{ postgresql_version.stdout }}/main/conf.d/server.conf"
+       line: "listen_addresses = '*'"
+       create: yes
+
+   - name: add new configuration to "pg_hba.conf"
+     become: true
+     become_user: postgres
+     blockinfile:
+       dest: "/etc/postgresql/{{ postgresql_version.stdout }}/main/pg_hba.conf"
+       block: |
+         host    all             all             0.0.0.0/0               md5
+         host    replication     all             0.0.0.0/0               md5
+
+   - name: restarting PostgreSQL service
+     service:
+       name: postgresql
+       state: restarted
+
+   - name: encrypting PostgreSQL root password
+     shell: "echo \"md5$(echo -n '{{ mysql_root_pwd }}root' | md5sum | awk '{print $1}')\""
+     register: md5_psql_root_pwd
+
+   - name: encrypting PostgreSQL aluno password
+     shell: "echo \"md5$(echo -n 'aluno123aluno' | md5sum | awk '{print $1}')\""
+     register: md5_psql_aluno_pwd
+
+   - name: debug show md5_psql_root_pwd
+     debug: msg="{{ md5_psql_root_pwd.stdout }}"
+
+   - name: debug show md5_psql_aluno_pwd
+     debug: msg="{{ md5_psql_aluno_pwd.stdout }}"
+
+   - name: create PostgreSQL database user 'root' with all database privileges
+     become: true
+     become_user: postgres
+     postgresql_user:
+       name: 'root'
+       password: "{{ md5_psql_root_pwd.stdout }}"
+       expires: infinity
+       role_attr_flags: LOGIN,SUPERUSER
+       state: present
+
+   - name: create PostgreSQL database user 'aluno'
+     become: true
+     become_user: postgres
+     postgresql_user:
+       name: 'aluno'
+       password: "{{ md5_psql_aluno_pwd.stdout }}"
+       expires: infinity
+       role_attr_flags: LOGIN,CREATEDB,NOSUPERUSER
+       state: present
+

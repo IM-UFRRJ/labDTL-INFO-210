@@ -1,0 +1,8 @@
+---
+- hosts: labDTL
+  tasks:
+   - name: list installed apt packages
+     shell: "apt list --installed"
+     register: shell_result
+   - debug:
+       var: shell_result.stdout_lines

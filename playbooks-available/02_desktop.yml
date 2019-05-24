@@ -1,0 +1,22 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install tasksel
+     command: apt install -y tasksel
+   - name: install ubuntu-desktop
+     command: tasksel install ubuntu-desktop
+   - name: install language pack EN e PT
+     command: apt install -y language-pack-{{ item.lang }} language-pack-gnome-{{ item.lang }}
+     with_items:
+       - { lang: 'en' }
+       - { lang: 'pt' }
+   - name: ensure a locale pt_BR.UTF-8 exists
+     locale_gen:
+       name: pt_BR.UTF-8
+       state: present
+   - name: set pt_BR.UTF-8 as default lang
+     command: localectl set-locale LANG=pt_BR.UTF-8 LC_MESSAGES="en_US.UTF-8"

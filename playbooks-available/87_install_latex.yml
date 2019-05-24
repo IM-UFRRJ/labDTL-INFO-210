@@ -1,0 +1,12 @@
+---
+- hosts: labDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: install LaTeX
+     command: apt install -y texlive-full
+   - name: install Pandoc
+     command: apt install -y pandoc
+
