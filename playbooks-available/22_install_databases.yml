@@ -12,6 +12,9 @@
       - localhost
       - "{{ ansible_hostname }}"
       - "%"
+    usr_db_root: 'root'
+    usr_db_aluno: 'aluno'
+    pwd_db_aluno: 'aluno123'
   environment: "{{proxy_env}}"
   tasks:
    - name: install MySQL
@@ -33,32 +36,32 @@
        src: "{{ path_mysql_cnf }}"
        dest: "{{ mysql_cnf }}"
 
-   - name: read MySQL root password from file
+   - name: read MySQL "{{ usr_db_root }}" password from file
      shell: "cat {{ mysql_cnf }}"
      register: cat_mysql_cnf
 
-   - name: parsing to capture MySQL root password
+   - name: parsing to capture MySQL "{{ usr_db_root }}" password
      set_fact:
        mysql_root_pwd: "{{ cat_mysql_cnf.stdout | regex_search(regex_pwd, '\\1') | first }}"
 
-   - name: update MySQL password for the localhost root account
+   - name: update MySQL password for the localhost "{{ usr_db_root }}" account
      block:
        - mysql_user:
            login_host: 'localhost'
-           login_user: 'root'
+           login_user: "{{ usr_db_root }}"
            login_password: ''
-           name: 'root'
+           name: "{{ usr_db_root }}"
            password: "{{ mysql_root_pwd }}"
            host: localhost
            state: present
      rescue:
        - debug:
-           msg: 'MySQL password for the localhost root account is already updated.'
+           msg: 'MySQL password for the localhost "{{ usr_db_root }}" account is already updated.'
 
-   - name: update MySQL password for all root accounts
+   - name: update MySQL password for all "{{ usr_db_root }}" accounts
      mysql_user:
        login_host: 'localhost'
-       name: 'root'
+       name: "{{ usr_db_root }}"
        password: "{{ mysql_root_pwd }}"
        host: "{{ item }}"
        state: present
@@ -77,8 +80,8 @@
 
    - name: create MySQL database user 'aluno' with all database privileges
      mysql_user:
-       name: 'aluno'
-       password: 'aluno123'
+       name: "{{ usr_db_aluno }}"
+       password: "{{ pwd_db_aluno }}"
        priv: '*.*:ALL'
        host: "{{ item }}"
        state: present
@@ -115,12 +118,12 @@
        name: postgresql
        state: restarted
 
-   - name: encrypting PostgreSQL root password
-     shell: "echo \"md5$(echo -n '{{ mysql_root_pwd }}root' | md5sum | awk '{print $1}')\""
+   - name: encrypting PostgreSQL "{{ usr_db_root }}" password
+     shell: "echo \"md5$(echo -n '{{ mysql_root_pwd }}{{ usr_db_root }}' | md5sum | awk '{print $1}')\""
      register: md5_psql_root_pwd
 
    - name: encrypting PostgreSQL aluno password
-     shell: "echo \"md5$(echo -n 'aluno123aluno' | md5sum | awk '{print $1}')\""
+     shell: "echo \"md5$(echo -n '{{ pwd_db_aluno }}{{ usr_db_aluno }}' | md5sum | awk '{print $1}')\""
      register: md5_psql_aluno_pwd
 
    - name: debug show md5_psql_root_pwd
@@ -129,11 +132,11 @@
    - name: debug show md5_psql_aluno_pwd
      debug: msg="{{ md5_psql_aluno_pwd.stdout }}"
 
-   - name: create PostgreSQL database user 'root' with all database privileges
+   - name: create PostgreSQL database user "{{ usr_db_root }}" with all database privileges
      become: true
      become_user: postgres
      postgresql_user:
-       name: 'root'
+       name: "{{ usr_db_root }}"
        password: "{{ md5_psql_root_pwd.stdout }}"
        expires: infinity
        role_attr_flags: LOGIN,SUPERUSER
@@ -143,9 +146,8 @@
      become: true
      become_user: postgres
      postgresql_user:
-       name: 'aluno'
+       name: "{{ usr_db_aluno }}"
        password: "{{ md5_psql_aluno_pwd.stdout }}"
        expires: infinity
        role_attr_flags: LOGIN,CREATEDB,NOSUPERUSER
        state: present
-
