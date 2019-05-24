@@ -62,4 +62,3 @@ for HOST_IP in ${LIST_IPS}; do
 		echo "${HOST_IP}" >> ${ALL_FILE_HOSTS}
 	fi
 done
-
