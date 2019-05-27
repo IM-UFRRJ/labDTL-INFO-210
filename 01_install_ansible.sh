@@ -35,7 +35,7 @@ echo "http://${NET_IP}:3128/"
 echo ""
 read -p 'Press [Enter] key to continue...'
 
-LIST_IPS=$( sudo nmap -p 22 -Pn -oG - "${NET_IP}/24" | awk '/open/{print $2}' )
+LIST_IPS=$( sudo nmap -p 22 -Pn -oG - "${NET_MASK}" | awk '/open/{print $2}' )
 echo "Scanned IPs:"
 echo "${LIST_IPS}"
 

@@ -46,14 +46,14 @@ ALL_FILE_HOSTS="all_hosts_labDTL"
 FILE_HOSTS="hosts_labDTL"
 FILE_EXTRA_VARS="${ROOT_PATH_KEYS}/extra_vars_${HOST_USER}.yml"
 EXTRA_VARS='ansible_python_interpreter=/usr/bin/python3'
+PATH_SSH_KEYS="${ROOT_PATH_KEYS}/id_rsa_$(hostname)"
 HOSTS="labDTL"
+
+source net_vars.sh
+
 #NET_IFACE="wlp2s0"
 #NET_IFACE="enp1s0"
 #NET_IFACE=$(ip addr show | awk '/inet.*brd/{print $NF}')
 NET_IFACE=$(ip addr show | awk '/inet.*brd/{print $NF; exit}')
-
-PATH_SSH_KEYS="${ROOT_PATH_KEYS}/id_rsa_$(hostname)"
-
 NET_IP=$(ip -o -4 addr list "${NET_IFACE}" | awk '{print $4}' | cut -d/ -f1)
 DEF_GATEWAY=$(ip route | grep "${NET_IFACE}" | awk '/default/ { print $3 }')
-
