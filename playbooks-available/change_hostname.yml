@@ -1,0 +1,39 @@
+---
+- hosts: deskDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: show hostname before change
+      debug: var=ansible_hostname
+    - name: check that the /etc/cloud/cloud.cfg exists
+      become: yes
+      stat:
+        path: /etc/cloud/cloud.cfg
+      register: cloud_result
+    - name: at /etc/cloud/cloud.cfg set 'preserve_hostname' from 'false' to 'true'
+      become: yes
+      replace:
+        path: /etc/cloud/cloud.cfg
+        regexp: "^(preserve_hostname:\\s+)false$"
+        replace: "\\1true"
+      when: cloud_result.stat.exists == True
+    - name: change hostname with hostnamectl
+      become: yes
+      command: hostnamectl set-hostname "{{ inventory_hostname }}"
+    - name: change hostname in /etc/hosts
+      become: yes
+      replace:
+        path: /etc/hosts
+        regexp: "^(127\\.0\\.1\\.1\\s+)\\S+$"
+        replace: "\\1{{ inventory_hostname }}"
+    - name: show hostname after change (before reboot)
+      debug: var=ansible_hostname
+    - name: reboot
+      become: yes
+      shell: "sleep 5 && shutdown -r now"
+      async: 10
+      poll: 0
+    - name: wait come up
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 delay=80 state=started
+    - name: show hostname after change and after reboot
+      debug: var=ansible_hostname

@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# em cada PC remoto, logo após a instalação limpa do ubuntu desktop LTS
-#ip a ## anotar o IP
+# ATENÇÃO
+# em cada PC remoto, logo após a instalação limpa do ubuntu LTS desktop/server,
+# e cada máquina deve receber um nome único de até 6 chars (ex: número do patrimônio)
+
 #sudo apt install openssh-client openssh-server -y
 
 
-# no PC administrador
+# instalação de programas prévios no PC do administrador
 if ! grep -q "^deb .*ansible" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
 	sudo add-apt-repository ppa:ansible/ansible
 	sudo apt update
@@ -23,11 +25,10 @@ else
 	sudo service squid start
 fi
 
+
 source common_vars.sh
 
 PASSWD=$( enter_pwd "sudo system user ${HOST_USER}" )
-
-IGNORE_IPS="${NET_IP} ${DEF_GATEWAY}"
 
 echo ""
 echo "Set this adress as Proxy Server in targets:"
@@ -35,12 +36,16 @@ echo "http://${NET_IP}:3128/"
 echo ""
 read -p 'Press [Enter] key to continue...'
 
-LIST_IPS=$( sudo nmap -p 22 -Pn -oG - "${NET_MASK}" | awk '/open/{print $2}' )
-echo "Scanned IPs:"
+#LIST_IPS=$( sudo nmap -p 22 -Pn -oG - "${NET_MASK}" | awk '/open/{print $2}' )
+LIST_IPS=$( grep 'ansible_host' ${ALL_FILE_HOSTS} | cut -d= -f2 )
+#LIST_MACS=$( awk '/ansible_host/{print $1}' ${ALL_FILE_HOSTS} )
+echo ""
+echo "Loaded IPs from ${ALL_FILE_HOSTS}"
 echo "${LIST_IPS}"
+echo ""
 
 PASSPHRASE=''	# $( passphrase )
-echo "Passphrase to unlick private key: '${PASSPHRASE}'"
+echo "Passphrase to unlock private key: '${PASSPHRASE}'"
 
 rm -rf ${ROOT_PATH_KEYS}
 mkdir -p ${ROOT_PATH_KEYS}
@@ -52,13 +57,28 @@ sudo service ssh restart
 
 sudo service ssh restart
 
-echo "[${HOSTS}]" > ${ALL_FILE_HOSTS}
+echo "[${HOSTS}]" > ${VALID_FILE_HOSTS}
 for HOST_IP in ${LIST_IPS}; do
-	if [[ $IGNORE_IPS =~ (^|[[:space:]])${HOST_IP}($|[[:space:]]) ]]; then
-		echo "ignoring IP: ${HOST_IP}"
+	HOST_MAC=$( grep "ansible_host=${HOST_IP}$" ${ALL_FILE_HOSTS} | awk '{print $1}' )
+	HOST_SSH=$( nmap -p 22 -Pn -oG - ${HOST_IP} | awk '/open/{print $2}' )
+	if [ -z "${HOST_SSH}" ]; then
+		echo "ERROR without ssh at host ${HOST_IP} (${HOST_MAC})"
 	else
-		echo "setting ${HOST_IP} ..."
+		echo "setting ${HOST_IP} (${HOST_MAC}) ..."
 		./expect_ssh-copy.sh "${HOST_USER}" "${HOST_IP}" "${PASSWD}" "${PATH_SSH_KEYS}"
-		echo "${HOST_IP}" >> ${ALL_FILE_HOSTS}
+		if [ $? -eq 0 ]; then
+			echo -e "SUCCESS ssh-copy to host IP: ${HOST_IP}\tMAC-ADDRESS: ${HOST_MAC}"
+			echo -e "${HOST_MAC}\tansible_host=${HOST_IP}" >> ${VALID_FILE_HOSTS}
+		else
+			echo "ERROR on ssh-copy to host ${HOST_IP} (${HOST_MAC})"
+		fi
 	fi
 done
+
+echo ""
+echo "======================================================="
+echo "cat ${VALID_FILE_HOSTS}"
+echo "======================================================="
+cat ${VALID_FILE_HOSTS}
+echo "======================================================="
+echo ""

@@ -1,5 +1,5 @@
 ---
-- hosts: labDTL
+- hosts: deskDTL
   become: true
   vars_files:
     - vars.yml
@@ -14,43 +14,10 @@
       - "%"
   environment: "{{proxy_env}}"
   tasks:
-
-   - name: "copy {{ mysql_cnf }}"
-     copy:
-       src: "{{ path_mysql_cnf }}"
-       dest: "{{ mysql_cnf }}"
-
-   - name: read mysql root password from file
-     shell: "cat {{ mysql_cnf }}"
-     register: results
-
-   - name: debug show content
-     debug: msg="{{ results }}"
-
-   - name: parsing to capture mysql root password
-     set_fact:
-       mysql_root_pwd: "{{ results.stdout | regex_search(regex_pwd, '\\1') | first }}"
-
-   - name: debug pwd
-     debug: msg="{{ mysql_root_pwd }}"
-
-   - name: clear password from file
-     lineinfile:
-       path: "{{ mysql_cnf }}"
-       regexp: "^{{ regex_pwd }}"
-       line: 'password='
-
-   - name: set password at file
-     lineinfile:
-       path: "{{ mysql_cnf }}"
-       regexp: "^{{ regex_pwd }}"
-       line: "password={{ mysql_root_pwd }}"
-
-   - name: "delete {{ mysql_cnf }}"
-     file:
-       path: "{{ mysql_cnf }}"
-       state: absent
-
+#    - debug: var=hostvars
+    - debug: var=inventory_hostname
+    - debug: var=ansible_host
+    - debug: var=ansible_hostname
 #    - name: list
 #      debug: msg="{{ item }}"
 #      loop: "{{ mysql_list_host_all }}"
@@ -66,4 +33,3 @@
 #    - debug: var=ansible_lsb.major_release
 #    - debug: var=ansible_lsb.release
 #    - debug: var=ansible_architecture
-

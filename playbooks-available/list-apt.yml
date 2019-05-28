@@ -1,5 +1,5 @@
 ---
-- hosts: labDTL
+- hosts: deskDTL
   tasks:
    - name: list installed apt packages
      shell: "apt list --installed"

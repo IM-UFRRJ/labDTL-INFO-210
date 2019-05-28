@@ -20,6 +20,5 @@ while {1} {
 		"*\]"				{send "exit\r"}
 	}
 }
-wait
-close $spawn_id
-
+catch wait result
+exit [lindex $result 3]
