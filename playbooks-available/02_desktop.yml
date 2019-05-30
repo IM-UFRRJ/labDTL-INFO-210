@@ -7,8 +7,16 @@
   tasks:
    - name: install tasksel
      command: apt install -y tasksel
-   - name: install ubuntu-desktop
-     command: tasksel install ubuntu-desktop
+   - block:
+       - name: install ubuntu-desktop
+         command: tasksel install ubuntu-desktop
+     rescue:
+       - name: remove ubuntu-desktop
+         command: tasksel remove ubuntu-desktop
+       - name: reboot
+         reboot:
+       - name: install ubuntu-desktop
+         command: tasksel install ubuntu-desktop
    - name: install language pack EN e PT
      command: apt install -y language-pack-{{ item.lang }} language-pack-gnome-{{ item.lang }}
      with_items:
