@@ -1,5 +1,5 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   become: true
   vars_files:
     - vars.yml
@@ -12,7 +12,17 @@
    - name: install OpenBLAS
      command: apt install -y libopenblas-dev
    - name: install Python
-     command: apt install -y python python-pip python3 python3-pip
+     command: apt install -y python python3
+   - name: install essential modules from Python
+     command: apt install -y python-"{{ item }}" python3-"{{ item }}"
+     loop:
+       - dev
+       - pip
+       - pexpect
+   - name: install essential modules in Python with pip
+     shell: pip install "{{ item }}" && pip3 install "{{ item }}"
+     loop:
+       - virtualenv
    - name: install Java
      command: apt install -y default-jdk
    - name: install Maven
@@ -47,4 +57,3 @@
      command: apt install -y geogebra-classic
    - name: install dev utilities
      command: apt install -y graphviz vim obs-studio meld gdb cgdb valgrind pitivi sshfs bison flex wxmaxima
-

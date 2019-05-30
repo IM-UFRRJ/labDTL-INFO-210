@@ -77,8 +77,8 @@ done
 
 echo ""
 echo "======================================================="
-echo "cat ${VALID_FILE_HOSTS}"
+echo "show ${VALID_FILE_HOSTS}"
 echo "======================================================="
-cat ${VALID_FILE_HOSTS}
+grep -n '^' ${VALID_FILE_HOSTS}
 echo "======================================================="
 echo ""

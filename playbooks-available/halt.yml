@@ -1,5 +1,5 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   vars_files:
     - vars.yml
   tasks:
@@ -10,4 +10,3 @@
       poll: 0
     - name: wait go down
       local_action: wait_for host={{ ansible_ssh_host }} port=22 delay=5 state=drained
-

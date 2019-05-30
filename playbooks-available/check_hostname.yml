@@ -1,0 +1,8 @@
+---
+- hosts: dskDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: check hostname
+      debug:
+        msg: "HOST: {{ inventory_hostname }}   HOSTNAME: {{ ansible_hostname }}   IP: {{ ansible_default_ipv4.address }}   MAC: {{ ansible_default_ipv4.macaddress }}"

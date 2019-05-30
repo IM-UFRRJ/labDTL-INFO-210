@@ -1,0 +1,20 @@
+---
+- hosts: dskDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: remove apt proxy config
+      become: yes
+      file:
+        state: absent
+        path: "{{ file_apt_proxy }}"
+    - name: set apt proxy
+      become: yes
+      blockinfile:
+        create: yes
+        dest: "{{ file_apt_proxy }}"
+        marker: "// {mark} ANSIBLE MANAGED BLOCK"
+        content: |
+          Acquire::http::Proxy "{{ proxy_env.http_proxy }}";
+          Acquire::https::Proxy "{{ proxy_env.https_proxy }}";
+          Acquire::ftp::Proxy "{{ proxy_env.ftp_proxy }}";

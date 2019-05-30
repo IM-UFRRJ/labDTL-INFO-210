@@ -1,5 +1,5 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   vars_files:
     - vars.yml
   tasks:
@@ -10,12 +10,11 @@
       stat:
         path: /etc/cloud/cloud.cfg
       register: cloud_result
-    - name: at /etc/cloud/cloud.cfg set 'preserve_hostname' from 'false' to 'true'
+    - name: at cloud-init set 'preserve_hostname' from 'false' to 'true'
       become: yes
-      replace:
-        path: /etc/cloud/cloud.cfg
-        regexp: "^(preserve_hostname:\\s+)false$"
-        replace: "\\1true"
+      copy:
+        dest: /etc/cloud/cloud.cfg.d/99_hostname.cfg
+        content: "preserve_hostname: true"
       when: cloud_result.stat.exists == True
     - name: change hostname with hostnamectl
       become: yes
@@ -30,10 +29,7 @@
       debug: var=ansible_hostname
     - name: reboot
       become: yes
-      shell: "sleep 5 && shutdown -r now"
-      async: 10
-      poll: 0
-    - name: wait come up
-      local_action: wait_for host={{ ansible_ssh_host }} port=22 delay=80 state=started
+      reboot:
+      when: inventory_hostname != ansible_hostname
     - name: show hostname after change and after reboot
       debug: var=ansible_hostname

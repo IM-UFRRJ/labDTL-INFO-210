@@ -1,0 +1,10 @@
+---
+- hosts: dskDTL
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: remove apt proxy config
+      become: yes
+      file:
+        state: absent
+        path: "{{ file_apt_proxy }}"

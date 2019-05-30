@@ -23,16 +23,16 @@ else
 	cat ${VALID_FILE_HOSTS} > ${FILE_HOSTS}
 	while read VALID_HOST <&3 && read HOSTNAME <&4; do
 		if [[ ${HOSTNAME} != "${HOSTS}"* ]]; then
-			HOSTNAME="${HOSTS}-${HOSTNAME}"
+			HOSTNAME="${HOSTS}${HOSTNAME}"
 		fi
 		sed -i "s/${VALID_HOST}/${HOSTNAME}/g" ${FILE_HOSTS}
 	done 3<<<"${LIST_VALID_HOSTS}" 4<<<"${LIST_HOSTNAMES}"
 
 	echo ""
 	echo "======================================================="
-	echo "cat ${FILE_HOSTS}"
+	echo "show ${FILE_HOSTS}"
 	echo "======================================================="
-	cat ${FILE_HOSTS}
+	grep -n '^' ${FILE_HOSTS}
 	echo "======================================================="
 	echo ""
 

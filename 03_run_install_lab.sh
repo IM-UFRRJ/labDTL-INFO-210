@@ -48,24 +48,26 @@ fi
 PATH_PLAYBOOKS="playbooks-enabled"
 rm -f ${PATH_PLAYBOOKS}/*.retry
 LIST_YML=(
+	"remove_proxy.yml"
+	"apt_set_proxy.yml"
 	#"test.yml"
 	"change_hostname.yml"
-	"remove_proxy.yml"
-	#"install_hwe.yml"
-	#"[0]*.yml"
-	#"reboot.yml"
-	#"[1-9]*.yml"
+	"install_hwe.yml"
+	"[0]*.yml"
+	"reboot.yml"
+	"[1-9]*.yml"
 	#"list-apt.yml"
 	#"list-locales.yml"
-	#"reboot.yml"
-	"test.yml"
+	"reboot.yml"
+	"check_hostname.yml"
+	"apt_unset_proxy.yml"
 	#"halt.yml"
 )
+
 PLAYBOOKS=""
 for YML in "${LIST_YML[@]}"; do
 	PLAYBOOKS="${PLAYBOOKS} ${PATH_PLAYBOOKS}/${YML}"
 done
-
 echo ""
 echo "ansible-playbook -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e \"@${FILE_EXTRA_VARS}\""
 ansible-playbook -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e "@${FILE_EXTRA_VARS}"

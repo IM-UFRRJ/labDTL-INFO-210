@@ -1,5 +1,5 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   tasks:
    - name: list locales
      shell: "locale && locale -a"

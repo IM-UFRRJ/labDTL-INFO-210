@@ -4,7 +4,8 @@ arch_deb: amd64
 dist_deb: "{{ ansible_lsb.codename }}"
 lts_version: "{{ ansible_lsb.release }}"
 ssh_client_ipv4: "{{ ansible_env['SSH_CLIENT'].split() | first }}"
+file_apt_proxy: "/etc/apt/apt.conf.d/90proxy"
 proxy_env:
   http_proxy: "http://{{ ssh_client_ipv4 }}:3128"
   https_proxy: "http://{{ ssh_client_ipv4 }}:3128"
-
+  ftp_proxy: "http://{{ ssh_client_ipv4 }}:3128"

@@ -1,5 +1,5 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   become: true
   vars_files:
     - vars.yml

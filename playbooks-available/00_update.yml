@@ -1,14 +1,33 @@
 ---
-- hosts: deskDTL
+- hosts: dskDTL
   become: true
   vars_files:
     - vars.yml
   environment: "{{proxy_env}}"
   tasks:
-   - name: update APT
-     command: apt update
-   - name: upgrade APT
-     command: apt upgrade -y
+   - block:
+       - name: update APT
+         command: apt update
+     rescue:
+       - name: update APT (with apt-get)
+         apt:
+           update_cache: yes
+         ignore_errors: True
+   - block:
+       - name: upgrade APT (with expect)
+         expect:
+           command: apt upgrade -y
+           responses:
+             Y/I/N/O/D/Z: "Y"
+     rescue:
+       - block:
+           - name: upgrade APT
+             command: apt upgrade -y
+         rescue:
+           - name: dpkg --configure -a
+             command: dpkg --configure -a
+           - name: apt install -f
+             command: apt install -f -y
    - name: autoremove APT
      command: apt autoremove --purge -y
    - name: autoclean APT
