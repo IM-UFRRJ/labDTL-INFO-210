@@ -8,7 +8,7 @@
    - name: install LibreOffice
      command: apt install -y libreoffice mythes-en-us libreoffice-l10n-pt-br
    - name: install Thunderbird
-     command: apt install -y thunderbird thunderbird-locale-en 
+     command: apt install -y thunderbird thunderbird-locale-en
    - name: install compressing
      command: apt install -y unrar pbzip2
    - name: install Firefox
@@ -21,9 +21,10 @@
      command: apt install -y pdf-presenter-console
    - name: install VirtualBox
      command: apt install -y virtualbox
+   - name: install Brasero
+     command: apt install -y brasero
    - name: install additional packages with languages
      command: apt install -y libreoffice-help-{{ item.lang }} hyphen-{{ item.lang }} thunderbird-locale-{{ item.lang }}
      with_items:
        - { lang: 'en-us' }
        - { lang: 'pt-br' }
-
