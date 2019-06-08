@@ -58,8 +58,8 @@ LIST_YML=(
 	"[1-9]*.yml"
 	#"list-apt.yml"
 	#"list-locales.yml"
-	"reboot.yml"
 	"apt_unset_proxy.yml"
+	"reboot.yml"
 	"check_hostname.yml"
 	#"halt.yml"
 )

@@ -9,7 +9,7 @@
 
 # instalação de programas prévios no PC do administrador
 if ! grep -q "^deb .*ansible" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-	sudo add-apt-repository ppa:ansible/ansible
+	sudo add-apt-repository -y 'ppa:ansible/ansible'
 	sudo apt update
 fi
 sudo apt install ansible expect nmap squid -y

@@ -7,11 +7,8 @@
   tasks:
    - name: install utilities to config
      command: apt install -y python-psutil python3-psutil python-dbus python3-dbus
-   - name: setting keyboard
-     replace:
-       path: /etc/default/keyboard
-       regexp: '(XKBLAYOUT=")us(")?$'
-       replace: '\1br\2'
+   - name: install Apache2-httpd
+     command: apt install -y apache2
    - name: setting Apache2-httpd
      command: a2enmod userdir
    - name: restart Apache2-httpd
@@ -45,4 +42,3 @@
        owner: "{{ item }}"
        group: "{{ item }}"
      with_items: "{{ homeusers.stdout_lines }}"
-

@@ -14,6 +14,7 @@
        repo: deb [arch={{ arch_deb }}] http://dl.google.com/linux/chrome/deb/ stable main
        state: present
        filename: google-chrome
+
    - name: add the Oracle signing key for VirtualBox repository
      apt_key:
        url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
@@ -23,6 +24,7 @@
        repo: deb [arch={{ arch_deb }}] https://download.virtualbox.org/virtualbox/debian {{ dist_deb }} contrib
        state: present
        filename: virtualbox
+
    - name: add a signing key for Atom repository
      apt_key:
        url: https://packagecloud.io/AtomEditor/atom/gpgkey
@@ -32,6 +34,7 @@
        repo: deb [arch={{ arch_deb }}] https://packagecloud.io/AtomEditor/atom/any/ any main
        state: present
        filename: atom
+
    - name: add a signing key for Docker repository
      apt_key:
        url: https://download.docker.com/linux/ubuntu/gpg
@@ -41,6 +44,7 @@
        repo: deb [arch={{ arch_deb }}] https://download.docker.com/linux/ubuntu {{ dist_deb }} stable
        state: present
        filename: docker
+
    - name: add a signing key for R-Project repository
      apt_key:
        keyserver: keyserver.ubuntu.com
@@ -50,15 +54,17 @@
        repo: deb https://cloud.r-project.org/bin/linux/ubuntu {{ dist_deb }}-cran35/
        state: present
        filename: r-project
+
    - name: add a signing key for Sublime Text repository
      apt_key:
        url: https://download.sublimetext.com/sublimehq-pub.gpg
        state: present
-   - name: add repository R-Project
+   - name: add repository Sublime Text
      apt_repository:
        repo: deb https://download.sublimetext.com/ apt/dev/
        state: present
        filename: sublime-text
+
    - name: add a signing key for Geogebra repository
      apt_key:
        url: https://static.geogebra.org/linux/office@geogebra.org.gpg.key
@@ -68,4 +74,12 @@
        repo: deb [arch={{ arch_deb }}] http://www.geogebra.net/linux/ stable main
        state: present
        filename: sublime-text
-
+   
+   - block:
+       - name: update APT
+         command: apt update
+     rescue:
+       - name: update APT (with apt-get)
+         apt:
+           update_cache: yes
+         ignore_errors: True

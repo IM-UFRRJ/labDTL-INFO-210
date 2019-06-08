@@ -1,0 +1,12 @@
+---
+- hosts: dskDTL
+  become: true
+  vars_files:
+    - vars.yml
+  environment: "{{proxy_env}}"
+  tasks:
+    - name: setting keyboard
+      replace:
+        path: /etc/default/keyboard
+        regexp: '(XKBLAYOUT=")us(")?$'
+        replace: '\1br\2'
