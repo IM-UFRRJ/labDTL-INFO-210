@@ -1,0 +1,11 @@
+- block:
+    - name: add a signing key - {{ repository.name }}
+      apt_key:
+        url: "{{ repository.key_url }}"
+        state: present
+    - name: add a repository - {{ repository.name }}
+      apt_repository:
+        repo: "deb {{ repository.repo }}"
+        state: present
+        filename: "{{ repository.name }}"
+  ignore_errors: yes

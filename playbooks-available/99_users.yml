@@ -25,4 +25,3 @@
        - { usr: 'alunodtl', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dtl }}', phr: '{{ phr_aluno_dtl }}', groups: 'users' }
        - { usr: 'alunodcc', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dcc }}', phr: '{{ phr_aluno_dcc }}', groups: 'users' }
        - { usr: 'extensao', fname: 'Extensão', pwd: '{{ pwd_extensao }}', phr: '{{ phr_extensao }}', groups: 'users' }
-
