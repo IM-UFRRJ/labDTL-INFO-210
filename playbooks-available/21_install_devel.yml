@@ -53,6 +53,7 @@
      command: apt install -y dia
    - name: install R
      command: apt install -y r-base r-base-dev
+     ignore_errors: True
    - name: install Geogebra Classic
      command: apt install -y geogebra-classic
    - name: install dev utilities
