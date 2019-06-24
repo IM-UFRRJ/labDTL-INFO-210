@@ -13,6 +13,8 @@
      command: a2enmod userdir
    - name: restart Apache2-httpd
      service: name=apache2 state=restarted enabled=yes
+   - name: start and automate Docker
+     service: name=docker state=restarted enabled=yes
    - name: create public_html at skeleton to new users
      file:
        path: /etc/skel/public_html

@@ -39,6 +39,7 @@ if [ ! -f ${FILE_EXTRA_VARS} ] ; then
 	echo "user=root" >> ${PATH_MYSQL_CNF}
 	echo "password=${DB_ROOT_PASSWORD}" >> ${PATH_MYSQL_CNF}
 	EXTRA_VARS="${EXTRA_VARS} path_mysql_cnf=${PATH_MYSQL_CNF}"
+	EXTRA_VARS="${EXTRA_VARS} path_pwd=$(pwd)"
 
 	EXTRA_VARS="${EXTRA_VARS// /\\n}"
 	EXTRA_VARS="${EXTRA_VARS//=/: }"
@@ -48,11 +49,16 @@ fi
 PATH_PLAYBOOKS="playbooks-enabled"
 rm -f ${PATH_PLAYBOOKS}/*.retry
 LIST_YML=(
+	"init.yml"
+	#"00_update.yml"
 	"remove_proxy.yml"
 	"apt_set_proxy.yml"
 	#"test.yml"
 	"change_hostname.yml"
 	"install_hwe.yml"
+	#"01*.yml"
+	#"10*.yml"
+	#"00*.yml"
 	"[0]*.yml"
 	"reboot.yml"
 	"[1-9]*.yml"

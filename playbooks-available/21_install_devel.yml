@@ -44,9 +44,16 @@
    - name: remove old versions of Docker
      command: apt remove -y docker docker-engine docker.io
    - name: install Docker
-     command: apt install -y docker-ce
-   - name: install Code Blocks, Geany, Atom and Sublime Text
-     command: apt install -y codeblocks geany geany-plugins atom sublime-text
+     command: apt install -y docker.io #docker-ce
+     ignore_errors: True
+   - name: install Code Blocks, Geany
+     command: apt install -y codeblocks geany geany-plugins
+   - name: install Atom
+     command: apt install -y atom
+     ignore_errors: True
+   - name: install Sublime Text
+     command: apt install -y sublime-text
+     ignore_errors: True
    - name: install Scilab
      command: apt install -y scilab scilab-doc-pt-br scilab-plotlib scilab-ann scilab-celestlab python-sciscipy
    - name: install Dia

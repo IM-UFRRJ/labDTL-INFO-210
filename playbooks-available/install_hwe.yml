@@ -5,6 +5,8 @@
     - vars.yml
   environment: "{{proxy_env}}"
   tasks:
+   - name: fix install errors
+     command: "dpkg --configure -a"
+     ignore_errors: true
    - name: install apt Hardware Enablement Stack (HWE)
      command: "apt install -y --install-recommends linux-generic-hwe-{{ lts_version }}"
-

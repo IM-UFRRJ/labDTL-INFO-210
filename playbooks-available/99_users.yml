@@ -23,5 +23,5 @@
        - { usr: 'profdtl', fname: 'Prof. DTL', pwd: '{{ pwd_prof_dtl }}', phr: '{{ phr_prof_dtl }}', groups: 'adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare' }
        - { usr: 'profdcc', fname: 'Prof. DCC', pwd: '{{ pwd_prof_dcc }}', phr: '{{ phr_prof_dcc }}', groups: 'adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare' }
        - { usr: 'alunodtl', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dtl }}', phr: '{{ phr_aluno_dtl }}', groups: 'users' }
-       - { usr: 'alunodcc', fname: 'Aluno DTL', pwd: '{{ pwd_aluno_dcc }}', phr: '{{ phr_aluno_dcc }}', groups: 'users' }
+       - { usr: 'alunodcc', fname: 'Aluno DCC', pwd: '{{ pwd_aluno_dcc }}', phr: '{{ phr_aluno_dcc }}', groups: 'users' }
        - { usr: 'extensao', fname: 'Extensão', pwd: '{{ pwd_extensao }}', phr: '{{ phr_extensao }}', groups: 'users' }

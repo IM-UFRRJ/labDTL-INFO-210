@@ -5,6 +5,25 @@
     - vars.yml
   environment: "{{proxy_env}}"
   tasks:
+   - name: first try to fix missing GPG keys apt repository errors (NO_PUBKEY)
+     shell: >
+       apt update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p' | while read key; do if ! [[ ${keys[*]} =~ "$key" ]]; then apt-key adv --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys "$key"; keys+=\("$key"\); fi; done
+     ignore_errors: True
+   - name: second try to fix missing GPG keys apt repository errors (NO_PUBKEY)
+     shell: >
+       apt update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p' | while read key; do if ! [[ ${keys[*]} =~ "$key" ]]; then apt-key adv --keyserver hkp://keys.gnupg.net:80 --recv-keys "$key"; keys+=\("$key"\); fi; done
+     ignore_errors: True
+   - name: first try to fix expired GPG keys apt repository errors (EXPKEYSIG)
+     shell: >
+       apt update 2>&1 1>/dev/null | sed -ne 's/.*EXPKEYSIG //p' | while read key; do if ! [[ ${keys[*]} =~ "$key" ]]; then apt-key adv --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys "$key"; keys+=\("$key"\); fi; done
+     ignore_errors: True
+   - name: second try to fix expired GPG keys apt repository errors (EXPKEYSIG)
+     shell: >
+       apt update 2>&1 1>/dev/null | sed -ne 's/.*EXPKEYSIG //p' | while read key; do if ! [[ ${keys[*]} =~ "$key" ]]; then apt-key adv --keyserver hkp://keys.gnupg.net:80 --recv-keys "$key"; keys+=\("$key"\); fi; done
+     ignore_errors: True
+   - name: fix install errors
+     command: "dpkg --configure -a"
+     ignore_errors: true
    - block:
        - name: update APT
          command: apt update
@@ -26,8 +45,10 @@
          rescue:
            - name: dpkg --configure -a
              command: dpkg --configure -a
+             ignore_errors: True
            - name: apt install -f
              command: apt install -f -y
+             ignore_errors: True
    - name: autoremove APT
      command: apt autoremove --purge -y
    - name: autoclean APT

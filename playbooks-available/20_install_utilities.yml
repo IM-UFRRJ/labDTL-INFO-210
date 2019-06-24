@@ -21,6 +21,7 @@
      command: apt install -y pdf-presenter-console
    - name: install VirtualBox
      command: apt install -y virtualbox
+     ignore_errors: True
    - name: install Brasero
      command: apt install -y brasero
    - name: install additional packages with languages
