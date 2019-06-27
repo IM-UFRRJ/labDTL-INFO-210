@@ -25,6 +25,7 @@
             repo: deb https://cloud.r-project.org/bin/linux/ubuntu {{ dist_deb }}-cran35/
             state: present
             filename: r-project
+          environment: "{{proxy_env}}"
       rescue:
         - name: remove repository R-Project
           apt_repository:
