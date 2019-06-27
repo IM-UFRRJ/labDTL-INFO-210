@@ -18,12 +18,12 @@ SQUID_CONF="/etc/squid/squid.conf"
 SQUID_DENY_ALL='http_access deny all'
 SQUID_OBJ_SIZE='# maximum_object_size 4 MB'
 SQUID_EXP_TIME='# minimum_expiry_time 0 seconds'
-if grep -xqF "${DENY_ALL}" ${SQUID_CONF}
+if grep -xqF "${SQUID_DENY_ALL}" ${SQUID_CONF}
 then
 	echo "Setting Squid proxy server"
 	sudo sed -i "s/^${SQUID_DENY_ALL}$/#${SQUID_DENY_ALL}\nhttp_access allow all/g" ${SQUID_CONF}
-	#sudo sed -i "s/^${SQUID_OBJ_SIZE}$/${SQUID_OBJ_SIZE}\nmaximum_object_size 1 GB/g" ${SQUID_CONF}
-	#sudo sed -i "s/^${SQUID_EXP_TIME}$/${SQUID_EXP_TIME}\nminimum_expiry_time 600 seconds/g" ${SQUID_CONF}
+	sudo sed -i "s/^${SQUID_OBJ_SIZE}$/${SQUID_OBJ_SIZE}\nmaximum_object_size 1 GB/g" ${SQUID_CONF}
+	sudo sed -i "s/^${SQUID_EXP_TIME}$/${SQUID_EXP_TIME}\nminimum_expiry_time 0 seconds/g" ${SQUID_CONF}
 	sudo service squid restart
 else
 	sudo service squid start
