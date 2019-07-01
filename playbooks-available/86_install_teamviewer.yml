@@ -1,0 +1,16 @@
+---
+- hosts: dskDTL
+  vars_files:
+    - vars.yml
+  vars:
+    url_teamviewer: https://download.teamviewer.com/download/linux/teamviewer_{{ arch_deb }}.deb
+    file_teamviewer: /tmp/teamviewer_{{ arch_deb }}.deb
+  environment: "{{proxy_env}}"
+  tasks:
+   - name: download TeamViewer from {{ url_teamviewer }}
+     get_url:
+       url: "{{ url_teamviewer }}"
+       dest: "{{ file_teamviewer }}"
+   - name: install TeamViewer
+     command: "apt install -y {{ file_teamviewer }}"
+     become: true

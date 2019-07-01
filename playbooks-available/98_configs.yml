@@ -15,6 +15,7 @@
      service: name=apache2 state=restarted enabled=yes
    - name: start and automate Docker
      service: name=docker state=restarted enabled=yes
+     ignore_errors: True
    - name: create public_html at skeleton to new users
      file:
        path: /etc/skel/public_html

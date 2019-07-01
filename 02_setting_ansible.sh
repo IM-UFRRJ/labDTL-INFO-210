@@ -2,10 +2,10 @@
 
 source common_vars.sh
 
-echo "ansible -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e \"${EXTRA_VARS}\" -m setup"
-ansible -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup
+echo "ansible -f ${FORKS} -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e \"${EXTRA_VARS}\" -m setup"
+ansible -f ${FORKS} -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup
 
-RESULT=$( ansible -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup )
+RESULT=$( ansible -f ${FORKS} -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup )
 LIST_VALID_HOSTS=$( echo $RESULT | grep -oP "[0-9]+.[0-9]+.[0-9]+.[0-9]+(?= \| SUCCESS)" )
 LIST_HOSTNAMES=$( echo $RESULT | grep -oP "(?:\"ansible_hostname\"\: \"*\K)[^\"]*" )
 if [ -z "${LIST_VALID_HOSTS}" ]; then
@@ -18,7 +18,7 @@ echo "${LIST_HOSTNAMES}"
 
 if [ -z "${LIST_VALID_HOSTS}" ]
 then
-	ansible -vvvv -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup
+	ansible -vvvv -f ${FORKS} -i ${VALID_FILE_HOSTS} ${HOSTS} -u ${HOST_USER} --private-key=${PATH_SSH_KEYS} -e "${EXTRA_VARS}" -m setup
 else
 	cat ${VALID_FILE_HOSTS} > ${FILE_HOSTS}
 	while read VALID_HOST <&3 && read HOSTNAME <&4; do

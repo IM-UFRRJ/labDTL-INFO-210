@@ -45,5 +45,6 @@ done
 FILE_EXTRA_VARS="${ROOT_PATH_KEYS}/extra_vars_${HOST_USER}.yml"
 EXTRA_VARS='ansible_python_interpreter=/usr/bin/python3'
 PATH_SSH_KEYS="${ROOT_PATH_KEYS}/id_rsa_$(hostname)"
+FORKS=25
 
 source net_vars.sh

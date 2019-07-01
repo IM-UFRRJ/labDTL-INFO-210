@@ -51,6 +51,7 @@ rm -f ${PATH_PLAYBOOKS}/*.retry
 LIST_YML=(
 	"init.yml"
 	"remove_proxy.yml"
+	#"reboot.yml"
 	"apt_set_proxy.yml"
 	#"test.yml"
 	"change_hostname.yml"
@@ -58,7 +59,9 @@ LIST_YML=(
 	#"00*.yml"
 	"[0]*.yml"
 	"reboot.yml"
-	"[1-7]*.yml"
+	"[1]*.yml"
+	#"20*.yml"
+	"[2-7]*.yml"
 	"[8]*.yml"
 	"[9]*.yml"
 	#"list-apt.yml"
@@ -74,5 +77,5 @@ for YML in "${LIST_YML[@]}"; do
 	PLAYBOOKS="${PLAYBOOKS} ${PATH_PLAYBOOKS}/${YML}"
 done
 echo ""
-echo "ansible-playbook -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e \"@${FILE_EXTRA_VARS}\""
-ansible-playbook -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e "@${FILE_EXTRA_VARS}"
+echo "ansible-playbook -f ${FORKS} -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e \"@${FILE_EXTRA_VARS}\""
+ansible-playbook -f ${FORKS} -i ${FILE_HOSTS} -u ${HOST_USER} ${PLAYBOOKS} --private-key=${PATH_SSH_KEYS} -e "@${FILE_EXTRA_VARS}"
