@@ -11,12 +11,18 @@
        - name: install ubuntu-desktop
          command: tasksel install ubuntu-desktop
      rescue:
-       - name: remove ubuntu-desktop
-         command: tasksel remove ubuntu-desktop
-       - name: reboot
-         reboot:
-       - name: install ubuntu-desktop
-         command: tasksel install ubuntu-desktop
+       - block:
+           - name: dpkg --configure -a
+             command: dpkg --configure -a
+           - name: apt install -f
+             command: apt install -f -y
+         rescue:
+           - name: remove ubuntu-desktop
+             command: tasksel remove ubuntu-desktop
+           - name: reboot
+             reboot:
+           - name: install ubuntu-desktop
+             command: tasksel install ubuntu-desktop
    - name: install language pack EN e PT
      command: apt install -y language-pack-{{ item.lang }} language-pack-gnome-{{ item.lang }}
      with_items:
