@@ -4,13 +4,21 @@
     - vars.yml
   vars:
     url_teamviewer: https://download.teamviewer.com/download/linux/teamviewer_{{ arch_deb }}.deb
-    file_teamviewer: /tmp/teamviewer_{{ arch_deb }}.deb
+    file_teamviewer: "{{ ansible_env.HOME }}/teamviewer_{{ arch_deb }}.deb"
   environment: "{{proxy_env}}"
   tasks:
-   - name: download TeamViewer from {{ url_teamviewer }}
-     get_url:
-       url: "{{ url_teamviewer }}"
-       dest: "{{ file_teamviewer }}"
+   - block:
+       - name: download TeamViewer from {{ url_teamviewer }}
+         get_url:
+           url: "{{ url_teamviewer }}"
+           dest: "{{ file_teamviewer }}"
+     rescue:
+       - name: wget TeamViewer from {{ url_teamviewer }}
+         command: "wget -P {{ ansible_env.HOME }} -O teamviewer_{{ arch_deb }}.deb {{ url_teamviewer }}"
    - name: install TeamViewer
      command: "apt install -y {{ file_teamviewer }}"
      become: true
+   - name: remove "{{ file_teamviewer }}"
+     file:
+      state: absent
+      path: "{{ file_teamviewer }}"
