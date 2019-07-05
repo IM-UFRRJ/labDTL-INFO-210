@@ -4,7 +4,7 @@
     - vars.yml
   vars:
     url_base_rstudio: https://download1.rstudio.org
-    file_rstudio: /tmp/rstudio.deb
+    file_rstudio: "{{ ansible_env.HOME }}/rstudio.deb"
   environment: "{{proxy_env}}"
   tasks:
    - name: download index to RStudio's URLs
@@ -19,11 +19,18 @@
        url_rstudio: "{{ results.stdout | regex_search(regex_rstudio, '\\1') | first }}"
      vars:
        regex_rstudio: "[\\s\\S]+>[\\s]*(desktop\\/{{ dist_deb }}\\/{{ arch_deb }}\\/rstudio-[0-9\\.]+-{{ arch_deb }}.deb)[\\s]*<[\\s\\S]+"
-   - name: download RStudio from {{ url_base_rstudio }}/{{ url_rstudio }}
-     get_url:
-       url: "{{ url_base_rstudio }}/{{ url_rstudio }}"
-       dest: "{{ file_rstudio }}"
+   - block:
+       - name: download RStudio from {{ url_base_rstudio }}/{{ url_rstudio }}
+         get_url:
+           url: "{{ url_base_rstudio }}/{{ url_rstudio }}"
+           dest: "{{ file_rstudio }}"
+     rescue:
+       - name: wget RStudio from {{ url_base_rstudio }}/{{ url_rstudio }}
+         command: "wget -P {{ ansible_env.HOME }} -O rstudio.deb {{ url_base_rstudio }}/{{ url_rstudio }}"
    - name: install RStudio
      command: "apt install -y {{ file_rstudio }}"
      become: true
-
+   - name: remove "{{ file_rstudio }}"
+     file:
+      state: absent
+      path: "{{ file_rstudio }}"

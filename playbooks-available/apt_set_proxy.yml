@@ -18,3 +18,16 @@
           Acquire::http::Proxy "{{ proxy_env.http_proxy }}";
           Acquire::https::Proxy "{{ proxy_env.https_proxy }}";
           Acquire::ftp::Proxy "{{ proxy_env.ftp_proxy }}";
+    - name: set snap proxy
+      become: yes
+      blockinfile:
+        create: yes
+        dest: "{{ item.fileproxy }}"
+        marker: "// {mark} ANSIBLE MANAGED BLOCK"
+        content: |
+          [Service]
+          Environment="{{ item.keyproxy }}={{ item.valueproxy }}"
+      loop:
+        - { fileproxy : "{{ file_snap_http_proxy }}", keyproxy : "http_proxy" , valueproxy : "{{ proxy_env.http_proxy }}" }
+        #- { fileproxy : "{{ file_snap_https_proxy }}", keyproxy : "https_proxy" , valueproxy : "{{ proxy_env.https_proxy }}" }
+        #- { fileproxy : "{{ file_snap_ftp_proxy }}", keyproxy : "ftp_proxy" , valueproxy : "{{ proxy_env.ftp_proxy }}" }

@@ -5,9 +5,14 @@
     - vars.yml
   environment: "{{proxy_env}}"
   tasks:
+   - name: restart Snapd
+     service: name=snapd state=restarted
+     ignore_errors: True
    - name: install Snap
      command: apt install -y snap
      ignore_errors: True
+   - name: restart Snapd
+     service: name=snapd state=restarted
    - name: install Snapcraft
      command: snap install --classic snapcraft
      ignore_errors: True

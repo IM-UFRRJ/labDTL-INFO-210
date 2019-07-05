@@ -8,3 +8,12 @@
       file:
         state: absent
         path: "{{ file_apt_proxy }}"
+    - name: remove snap proxy config
+      become: yes
+      file:
+        state: absent
+        path: "{{ item }}"
+      loop:
+        - "{{ file_snap_http_proxy }}"
+        - "{{ file_snap_https_proxy }}"
+        - "{{ file_snap_ftp_proxy }}"

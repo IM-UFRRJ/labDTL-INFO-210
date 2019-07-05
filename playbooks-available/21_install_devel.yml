@@ -63,5 +63,6 @@
      ignore_errors: True
    - name: install Geogebra Classic
      command: apt install -y geogebra-classic
+     ignore_errors: True
    - name: install dev utilities
      command: apt install -y graphviz vim obs-studio meld gdb cgdb valgrind pitivi sshfs bison flex wxmaxima

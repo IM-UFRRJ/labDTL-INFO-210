@@ -11,7 +11,7 @@
    - name: remove NTP
      command: apt purge -y ntp
    - name: install OpenNTPD
-     command: apt install -y openntpd
+     command: apt install -y openntpd ntpdate
    - name: stop OpenNTPD
      service: name=openntpd state=stopped enabled=yes
    - name: replace conf OpenNTPD
