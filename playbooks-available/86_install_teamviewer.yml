@@ -14,7 +14,7 @@
            dest: "{{ file_teamviewer }}"
      rescue:
        - name: wget TeamViewer from {{ url_teamviewer }}
-         command: "wget -P {{ ansible_env.HOME }} -O teamviewer_{{ arch_deb }}.deb {{ url_teamviewer }}"
+         command: "wget -P {{ ansible_env.HOME }} -O teamviewer_{{ arch_deb }}.deb '{{ url_teamviewer }}'"
    - name: install TeamViewer
      command: "apt install -y {{ file_teamviewer }}"
      become: true

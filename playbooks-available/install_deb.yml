@@ -1,0 +1,15 @@
+- block:
+    - name: "download {{ deb.url }}/{{ deb.file }}"
+      get_url:
+        url: "{{ deb.url }}/{{ deb.file }}"
+        dest: "{{ ansible_env.HOME }}/{{ deb.file }}"
+  rescue:
+    - name: "wget {{ deb.url }}/{{ deb.file }}"
+      command: "wget -P {{ ansible_env.HOME }} -O '{{ deb.file }}' '{{ deb.url }}/{{ deb.file }}'"
+- name: "install {{ deb.file }}"
+  command: "apt install -y {{ ansible_env.HOME }}/{{ deb.file }}"
+  become: true
+- name: remove "{{ ansible_env.HOME }}/{{ deb.file }}"
+  file:
+    state: absent
+    path: "{{ ansible_env.HOME }}/{{ deb.file }}"

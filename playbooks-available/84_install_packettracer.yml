@@ -1,0 +1,62 @@
+---
+- hosts: dskDTL
+  vars_files:
+    - vars.yml
+  vars:
+    path_packettracer: "{{ ansible_env.HOME }}/PacketTracer"
+    file_packettracer: "PacketTracer7.2.1forLinux64bit.tar.gz"
+    url_packettracer: "http://{{ ssh_client_ipv4 }}/~fabricio/CISCO/Packet%20Tracer%207.2.1%20for%20Linux%2064%20bit.tar.gz"
+  environment: "{{proxy_env}}"
+  tasks:
+    - name: remove "{{ path_packettracer }}"
+      become: true
+      file:
+        state: absent
+        path: "{{ path_packettracer }}"
+    - name: check that the /opt/pt exists
+      stat:
+        path: /opt/pt
+      register: opt_pt
+    - name: install Qt libraries (Packet Trace deps)
+      command: apt install -y expect libqt5webkit5 libqt5multimediawidgets5 libqt5svg5 libqt5script5 libqt5scripttools5 libqt5sql5
+      become: true
+    - name: install deb's from url's (Packet Trace deps)
+      include_tasks: install_deb.yml
+      loop:
+        - { name: "'libcu52'", url : 'http://mirrors.kernel.org/ubuntu/pool/main/i/icu', file: 'libicu52_52.1-3ubuntu0.8_amd64.deb' }
+        - { name: "'libpng12'", url : 'http://ftp.debian.org/debian/pool/main/libp/libpng', file: 'libpng12-0_1.2.50-2+deb8u3_amd64.deb' }
+      loop_control:
+        loop_var: deb
+      when: opt_pt.stat.exists == False
+    - name: "creating directory {{ path_packettracer }}"
+      file:
+        path: "{{ path_packettracer }}"
+        state: directory
+      when: opt_pt.stat.exists == False
+    - block:
+        - name: "download {{ url_packettracer }}"
+          get_url:
+            url: "{{ url_packettracer }}"
+            dest: "{{ path_packettracer }}/{{ file_packettracer }}"
+      rescue:
+        - name: "wget {{ url_packettracer }}"
+          command: "wget -P {{ path_packettracer }} -O '{{ file_packettracer }}' '{{ url_packettracer }}'"
+      when: opt_pt.stat.exists == False
+    - name: "extract {{ file_packettracer }}"
+      command: "tar -x -C {{ path_packettracer }} -f {{ path_packettracer }}/{{ file_packettracer }} --overwrite"
+      when: opt_pt.stat.exists == False
+    - name: remove "{{ path_packettracer }}/{{ file_packettracer }}"
+      become: true
+      file:
+        state: absent
+        path: "{{ path_packettracer }}/{{ file_packettracer }}"
+      when: opt_pt.stat.exists == False
+    - name: install Packet Tracer
+      become: true
+      script: ../expect_packettracer.sh {{ path_packettracer }}
+      when: opt_pt.stat.exists == False
+    - name: remove "{{ path_packettracer }}"
+      become: true
+      file:
+        state: absent
+        path: "{{ path_packettracer }}"

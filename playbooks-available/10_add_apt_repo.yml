@@ -17,6 +17,13 @@
       loop_control:
         loop_var: repository
 
+    - name: add several apt PPA repositories
+      include_tasks: add_repo_ppa.yml
+      loop:
+        - { name : 'dbeaver-ce', repo: 'ppa:serge-rider/dbeaver-ce' }
+      loop_control:
+        loop_var: repository
+
     - block:
         - name: add a signing key for R-Project repository
           command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --keyserver-options http-proxy={{ proxy_env.http_proxy }} --recv-keys E084DAB9

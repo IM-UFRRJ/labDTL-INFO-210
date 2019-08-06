@@ -1,0 +1,11 @@
+- block:
+    - name: add a PPA repository - {{ repository.name }}
+      apt_repository:
+        repo: "{{ repository.repo }}"
+        state: present
+      environment: "{{proxy_env}}"
+  rescue:
+    - name: remove a PPA repository - {{ repository.name }}
+      apt_repository:
+        repo: "deb {{ repository.repo }}"
+        state: absent
