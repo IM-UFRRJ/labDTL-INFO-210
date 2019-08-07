@@ -50,7 +50,6 @@ PATH_PLAYBOOKS="playbooks-enabled"
 rm -f ${PATH_PLAYBOOKS}/*.retry
 LIST_YML=(
 	"init.yml"
-	"remove_proxy.yml"
 	#"reboot.yml"
 	"apt_set_proxy.yml"
 	#"test.yml"
