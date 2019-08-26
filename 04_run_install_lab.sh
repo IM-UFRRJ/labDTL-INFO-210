@@ -12,9 +12,9 @@ if [ ! -f ${FILE_EXTRA_VARS} ] ; then
 	LIST_USERS=(
 		 "prof-dtl"
 		 "prof-dcc"
+		 "prof-ext"
 		 "aluno-dtl"
 		 "aluno-dcc"
-		 "prof-ext"
 		 "extensao"
 	)
 
