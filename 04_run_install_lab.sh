@@ -14,6 +14,7 @@ if [ ! -f ${FILE_EXTRA_VARS} ] ; then
 		 "prof-dcc"
 		 "aluno-dtl"
 		 "aluno-dcc"
+		 "prof-ext"
 		 "extensao"
 	)
 
