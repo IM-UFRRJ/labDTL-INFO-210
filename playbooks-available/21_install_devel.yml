@@ -41,11 +41,11 @@
      command: apt install -y apache2
    - name: install PHP
      command: apt install -y php libapache2-mod-php php-mysql
-   - name: remove old versions of Docker
-     command: apt remove -y docker docker-engine docker.io
-   - name: install Docker
-     command: apt install -y docker.io #docker-ce
-     ignore_errors: True
+   #- name: remove old versions of Docker
+   #  command: apt remove -y docker docker-engine docker.io
+   #- name: install Docker
+   #  command: apt install -y docker.io #docker-ce
+   #  ignore_errors: True
    - name: install Code Blocks, Geany
      command: apt install -y codeblocks geany geany-plugins
    - name: install Atom
@@ -66,6 +66,9 @@
      ignore_errors: True
    - name: install DBeaver Community
      command: apt install -y dbeaver-ce
+     ignore_errors: True
+   - name: install Computer Graphics modules (mesa, opengl...)
+     command: apt install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev libglew-dev lib32z1-dev zlib1g-dev libalut-dev libpng++-dev libpng16-16 libpng-dev libpng-tools libjpeg-dev libglm-dev libglfw3 libglfw3-dev libglfw3-doc libsoil-dev libassimp-dev
      ignore_errors: True
    - name: install dev utilities
      command: apt install -y graphviz vim obs-studio meld gdb cgdb valgrind pitivi sshfs bison flex wxmaxima

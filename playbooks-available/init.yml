@@ -9,10 +9,6 @@
         path: /etc/default/keyboard
         regexp: '(XKBLAYOUT=")us(")?$'
         replace: '\1br\2'
-    - name: disable cloud-init
-      file:
-        path: /etc/cloud/cloud-init.disabled
-        state: touch
     - name: remove previous proxy installed
       file:
         path: "{{ item }}"
@@ -25,3 +21,19 @@
         path: /etc/apt/apt.conf
         state: absent
         regexp: 'Acquire.*Proxy'
+
+    - name: disable cloud-init
+      file:
+        path: /etc/cloud/cloud-init.disabled
+        state: touch
+      ignore_errors: True
+
+    - name: disable databases service
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: no
+      loop:
+        - mysql
+        - postgresql
+      ignore_errors: True

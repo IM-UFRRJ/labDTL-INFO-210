@@ -8,5 +8,8 @@
    - name: fix install errors
      command: "dpkg --configure -a"
      ignore_errors: true
+   - name: apt fix install errors
+     command: "apt -f install"
+     ignore_errors: true
    - name: install apt Hardware Enablement Stack (HWE)
      command: "apt install -y --install-recommends linux-generic-hwe-{{ lts_version }}"

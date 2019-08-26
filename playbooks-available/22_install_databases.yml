@@ -151,3 +151,13 @@
        expires: infinity
        role_attr_flags: LOGIN,CREATEDB,NOSUPERUSER
        state: present
+
+   - name: disable databases service (for limited resources)
+     service:
+       name: "{{ item }}"
+       state: stopped
+       enabled: no
+       enabled: yes
+     loop:
+       - mysql
+       - postgresql

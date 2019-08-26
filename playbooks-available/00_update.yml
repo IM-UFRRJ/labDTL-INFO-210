@@ -24,6 +24,9 @@
    - name: fix install errors
      command: "dpkg --configure -a"
      ignore_errors: true
+   - name: apt fix install errors
+     command: "apt -f install"
+     ignore_errors: true
    - block:
        - name: update APT
          command: apt update
@@ -33,25 +36,21 @@
            update_cache: yes
          ignore_errors: True
    - block:
-       - name: upgrade APT (with expect)
-         expect:
-           command: apt upgrade -y
-           responses:
-             Y/I/N/O/D/Z: "Y"
+       - name: Update all packages to the latest version
+         apt:
+           upgrade: dist
+       - name: upgrade APT
+         command: apt upgrade -y
+       - name: autoremove APT
+         command: apt autoremove --purge -y
+       - name: autoclean APT
+         command: apt autoclean -y
+       - name: clean APT
+         command: apt clean -y
      rescue:
-       - block:
-           - name: upgrade APT
-             command: apt upgrade -y
-         rescue:
-           - name: dpkg --configure -a
-             command: dpkg --configure -a
-             ignore_errors: True
-           - name: apt install -f
-             command: apt install -f -y
-             ignore_errors: True
-   - name: autoremove APT
-     command: apt autoremove --purge -y
-   - name: autoclean APT
-     command: apt autoclean -y
-   - name: clean APT
-     command: apt clean -y
+       - name: dpkg --configure -a
+         command: dpkg --configure -a
+         ignore_errors: True
+       - name: apt install -f
+         command: apt install -f -y
+         ignore_errors: True
