@@ -28,3 +28,11 @@ then
 else
 	sudo service squid start
 fi
+
+source net_vars.sh
+
+echo ""
+echo "Set this adress as Proxy Server in targets:"
+echo "http://${NET_IP}:3128/"
+echo ""
+read -p 'Press [Enter] key to continue...'

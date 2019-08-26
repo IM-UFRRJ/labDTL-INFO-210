@@ -20,7 +20,7 @@ Scripts para a a instalação e configuração inicial dos equipamentos do Labor
    ```
 
 1) **Fase de Preparação:**
-   Executar o comando abaixo no computador central. Este comando instala os programas e prepara os serviços necessários às fases seguintes (ex.: ansible e squid proxy). _**IMPORTANTE**: anotar o endereço do proxy exibido durante a execução do script, pois será utilizado na fase posterior._
+   Executar o comando abaixo no computador central. Este comando instala os programas e prepara os serviços necessários às fases seguintes (ex.: ansible e squid proxy). Após a instação dos serviços, será solicitada a indicação de qual a interface de rede qe deverá ser utilizada, e em seguida um arquivo contendo o identificador da interface de rede será criado (`hosts_iface_dskDTL`). Deve ser escolhida a interface de rede que está conectada à mesma rede dos computadores alvos/remotos. _**IMPORTANTE**: anotar o endereço do proxy exibido durante a execução do script, pois será utilizado na fase posterior._
    ```
    ./00_prepare_services.sh
    ```
@@ -35,19 +35,19 @@ Scripts para a a instalação e configuração inicial dos equipamentos do Labor
    1) Após a finalização da instalação com sucesso, o computador deve ser reiniciado.
 
 1) **Fase de Varredura da Rede:**
-   Executar o comando abaixo no computador central. Este comando varre a rede para encontrar PCs com o SSH ativado. No início é preciso indicar qual a interface de rede a ser utilizada, e ao final será criado e exibido o conteúdo de um arquivo contendo a lista de IPs dos PCs localizados. **IMPORTANTE**: a lista de IPs deve ter no mínimo a quantidade de computadores alvos. Caso a lista tenha uma quantidade menor, então algum PC pode estar desconectado ou não ter obtido IP da rede. _Possíveis causas: o cabo de rede pode estar desconectado (deve ser reconectado), ou o relógio da BIOS pode não está correto (deve ser ajustado para +3h da hora local e atual)._
+   Executar o comando abaixo no computador central. Este comando varre a rede para encontrar PCs com o SSH ativado. Se ainda não escolhido, logo no início será preciso indicar qual a interface de rede a ser utilizada, e ao final será criado e exibido o conteúdo de um arquivo contendo a lista de IPs dos PCs localizados (`hosts_dskDTL_all`). **IMPORTANTE**: a lista de IPs deve ter no mínimo a quantidade de computadores alvos. Caso a lista tenha uma quantidade menor, então algum PC pode estar desconectado ou não ter obtido IP da rede. _Possíveis causas: o cabo de rede pode estar desconectado (deve ser reconectado), ou o relógio da BIOS pode não está correto (deve ser ajustado para +3h da hora local e atual)._
    ```
    ./01_get_hosts.sh
    ```
 
 1) **Fase de Configuração do Acesso via SSH:**
-   Executar o comando abaixo no computador central. Este comando cria uma chave de autenticação para acesso remoto via SSH do computador central, e em seguida instala essa chave em cada computador remoto/alvo a partir da lista de IPs obtida na fase anterior. _Obs: Será solicitado a informação de login e senha do usuário administrador já configurado (e anotado) durante a fase de instalão do sistema em cada PC alvo._ Ao final será criado um novo arquivo com a lista de IPs dos PC em que as chaves de SSH foram instaladas com sucesso, e seu conteúdo será exibido. **IMPORTANTE**: a lista de IPs deve ter no exatamente a quantidade de computadores alvos. Caso a lista tenha uma quantidade menor, então algum PC pode estar desconectado ou não ter obtido IP da rede, ou ainda o login/senha estão diferentes no PC ausente da lista (para solucionar este último problema, a fase de instalação do SO deve ser repetida no PC ausente).
+   Executar o comando abaixo no computador central. Este comando cria uma chave de autenticação para acesso remoto via SSH do computador central, e em seguida instala essa chave em cada computador remoto/alvo a partir da lista de IPs obtida na fase anterior. _Obs: Será solicitado a informação de login e senha do usuário administrador já configurado (e anotado) durante a fase de instalão do sistema em cada PC alvo._ Ao final será criado um novo arquivo com a lista de IPs dos PC em que as chaves de SSH foram instaladas com sucesso, e seu conteúdo será exibido (`hosts_dskDTL_valid`). **IMPORTANTE**: a lista de IPs deve ter no exatamente a quantidade de computadores alvos. Caso a lista tenha uma quantidade menor, então algum PC pode estar desconectado ou não ter obtido IP da rede, ou ainda o login/senha estão diferentes no PC ausente da lista (para solucionar este último problema, a fase de instalação do SO deve ser repetida no PC ausente).
    ```
    ./02_set_ssh_keys.sh
    ```
 
 1) **Fase de Teste do Ansible via SSH:**
-   Executar o comando abaixo no computador central. Este comando testa o acesso via _ansible_ a cada PC alvo/remoto e configura um apelido aos IPs a partir do nome dado a cada PC durante a fase de instalação do SO. O login do usuário administrador será solicitado. Em seguida será criado novo um arquivo no formato em que o _Ansible_ espera contendo a lista de hosts alvos, e o mesmo será exibido. Novamente, a quantidade de IPs presentes na lista de hosts deve ser verificada.
+   Executar o comando abaixo no computador central. Este comando testa o acesso via _ansible_ a cada PC alvo/remoto e configura um apelido aos IPs a partir do nome dado a cada PC durante a fase de instalação do SO. O login do usuário administrador será solicitado. Em seguida será criado novo um arquivo no formato em que o _Ansible_ espera contendo a lista de hosts alvos, e o mesmo será exibido (`hosts_dskDTL`). Novamente, a quantidade de IPs presentes na lista de hosts deve ser verificada.
    ```
    ./03_setting_hosts.sh
    ```

@@ -11,12 +11,6 @@ source common_vars.sh
 
 PASSWD=$( enter_pwd "sudo system user ${HOST_USER}" )
 
-echo ""
-echo "Set this adress as Proxy Server in targets:"
-echo "http://${NET_IP}:3128/"
-echo ""
-read -p 'Press [Enter] key to continue...'
-
 #LIST_IPS=$( sudo nmap -p 22 -Pn -oG - "${NET_MASK}" | awk '/open/{print $2}' )
 LIST_IPS=$( grep 'ansible_host' ${ALL_FILE_HOSTS} | cut -d= -f2 )
 #LIST_MACS=$( awk '/ansible_host/{print $1}' ${ALL_FILE_HOSTS} )
