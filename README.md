@@ -58,7 +58,7 @@ Scripts para a a instalação e configuração inicial dos equipamentos do Labor
    ./links2available.sh
    ```
 
-1) **Fase de Instalção e Configuração dos PCs Alvos/Remotos:**
+1) **Fase de Instalação e Configuração dos PCs Alvos/Remotos:**
    Executar o comando abaixo no computador central. Aplica as diretrizes contidas nos arquivos de _playbooks_ habilitados (i.e., presentes no diretório `playbooks-enabled`), seguindo a ordem de nomeclatura dos _playbooks_. Logo no início serão feitas solicitações do login/senha do usuário administrador previamente configurado, seguida de solicitações dos login/senha dos demais usuários exigidos (_"profdtl", "profdcc", "profext", "alunodtl", "alunodcc", "extensao"_), bem como das credenciais do usuário root dos bancos de dados. Serão criados arquivos no diretório `keys` que armazenarão estas informações.
    Este script é o mais frequente a ser chamado, pois poderá ter que ser repetido em caso de erros durante a execução de alguma etapa da instalação/configuração nos computadores remotos, mas as solicitações das credenciais dos usuários não serão obrigatoriamente repetidas.
    ```

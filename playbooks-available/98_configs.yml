@@ -5,6 +5,27 @@
     - vars.yml
   environment: "{{proxy_env}}"
   tasks:
+   - name: setting NetworkManager conf
+     replace:
+      path: /etc/NetworkManager/NetworkManager.conf
+      regexp: 'managed=false'
+      replace: 'managed=true'
+     ignore_errors: True
+   - name: setting NetworkManager
+     file:
+      path: /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+      state: touch
+     ignore_errors: True
+   - name: restart network-manager service
+     service:
+      name: network-manager
+      state: restarted
+     ignore_errors: True
+   - name: restart NetworkManager service
+     service:
+      name: NetworkManager
+      state: restarted
+     ignore_errors: True
    - name: install utilities to config
      command: apt install -y python-psutil python3-psutil python-dbus python3-dbus
    - name: install Apache2-httpd
