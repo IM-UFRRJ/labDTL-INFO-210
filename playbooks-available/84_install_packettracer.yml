@@ -60,3 +60,16 @@
       file:
         state: absent
         path: "{{ path_packettracer }}"
+    - name: create desktop shortcut for Packet Tracer
+      become: true
+      copy:
+        dest: /usr/share/applications/packet-tracer.desktop
+        content: |
+          [Desktop Entry]
+          Comment=Launch Cisco Packet Tracer
+          Terminal=false
+          Name=Cisco Packet Tracer
+          Exec=/opt/pt/packettracer
+          Type=Application
+          Icon=/opt/pt/art/app.ico
+          NoDisplay=false

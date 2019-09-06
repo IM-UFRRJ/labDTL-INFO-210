@@ -1,0 +1,52 @@
+---
+- hosts: dskDTL
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: stop networkd-dispatcher service
+      service:
+        name: networkd-dispatcher
+        state: stopped
+        enabled: no
+      ignore_errors: True
+    - name: mask networkd-dispatcher service
+      command: systemctl mask networkd-dispatcher
+      ignore_errors: True
+    - name: apt remove netplan
+      command: apt purge nplan netplan.io -y
+      ignore_errors: True
+    - name: remove netplan directories
+      file:
+        path: /usr/share/netplan/
+        state: absent
+      file:
+        path: /etc/netplan/
+        state: absent
+      ignore_errors: True
+    - name: apt install ifupdown
+      command: apt install ifupdown -y
+
+
+
+#    - name: setting NetworkManager conf
+#      replace:
+#        path: /etc/NetworkManager/NetworkManager.conf
+#        regexp: 'managed=false'
+#        replace: 'managed=true'
+#      ignore_errors: True
+#    - name: setting NetworkManager
+#      file:
+#        path: /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+#        state: touch
+#      ignore_errors: True
+#    - name: restart network-manager service
+#      service:
+#        name: network-manager
+#        state: restarted
+#      ignore_errors: True
+#    - name: restart NetworkManager service
+#      service:
+#        name: NetworkManager
+#        state: restarted
+#      ignore_errors: True

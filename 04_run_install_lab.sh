@@ -51,12 +51,12 @@ PATH_PLAYBOOKS="playbooks-enabled"
 rm -f ${PATH_PLAYBOOKS}/*.retry
 LIST_YML=(
 	"init.yml"
-	"reboot.yml"
+	#"reboot.yml"
 	"apt_set_proxy.yml"
 	#"test.yml"
 	"change_hostname.yml"
 	"install_hwe.yml"
-	#"0*.yml"
+	#"00*.yml"
 	#"01*.yml"
 	"[0]*.yml"
 	"reboot.yml"
@@ -72,9 +72,10 @@ LIST_YML=(
 	"[9]*.yml"
 	#"list-apt.yml"
 	#"list-locales.yml"
+	"final.yml"
 	"apt_unset_proxy.yml"
 	"reboot.yml"
-	"check_hostname.yml"
+	#"check_hostname.yml"
 	#"halt.yml"
 )
 

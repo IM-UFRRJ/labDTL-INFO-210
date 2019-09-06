@@ -4,27 +4,6 @@
   vars_files:
     - vars.yml
   tasks:
-    - name: setting NetworkManager conf
-      replace:
-        path: /etc/NetworkManager/NetworkManager.conf
-        regexp: 'managed=false'
-        replace: 'managed=true'
-      ignore_errors: True
-    - name: setting NetworkManager
-      file:
-        path: /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
-        state: touch
-      ignore_errors: True
-    - name: restart network-manager service
-      service:
-        name: network-manager
-        state: restarted
-      ignore_errors: True
-    - name: restart NetworkManager service
-      service:
-        name: NetworkManager
-        state: restarted
-      ignore_errors: True
     - name: setting keyboard
       replace:
         path: /etc/default/keyboard
@@ -47,14 +26,4 @@
       file:
         path: /etc/cloud/cloud-init.disabled
         state: touch
-      ignore_errors: True
-
-    - name: disable databases service
-      service:
-        name: "{{ item }}"
-        state: stopped
-        enabled: no
-      loop:
-        - mysql
-        - postgresql
       ignore_errors: True
